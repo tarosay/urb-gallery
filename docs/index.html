@@ -77,6 +77,9 @@ header .hdr-tools a {
   font-weight: 700;
 }
 header .hdr-tools a:hover { background: rgba(0, 0, 0, 0.28); text-decoration: none; }
+/* 作品が増えるとフッタのボタンは見えなくなる。上にも同じ入口を置く。 */
+header .hdr-tools a.submit { background: #fff; color: var(--mikan-dk); opacity: 1; }
+header .hdr-tools a.submit:hover { background: var(--sun); color: var(--ink); }
 
 /* ── ページの見出しと道具立て ──────────────────────────────
    見出しは文字ではなくロゴ。大きく出すと作品より目立つので、
@@ -256,6 +259,7 @@ footer .cta:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; 
   <div class="spacer"></div>
   <div class="hdr-tools">
     <a href="/uiap-hid-web/uiapruby-block.html" target="_blank" rel="noopener">URB Block Lab をひらく</a>
+    <a class="submit" href="submit.html">作品を出す</a>
   </div>
   <a href="/uiap-hid-web/" target="_blank" rel="noopener">← UIAPduino WebHID Lab</a>
 </header>
