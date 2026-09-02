@@ -21,6 +21,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # 作品を出す PR が、作品の置き場所だけを触っているかを見る。
+  # ページ本体やワークフローの書き換えがまぎれこむのを防ぐため。
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 比べる先が要るので、履歴を全部持ってくる
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 触っているファイルを見る
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node tools/check-pr.mjs
+
   build:
     runs-on: ubuntu-latest
     permissions:
