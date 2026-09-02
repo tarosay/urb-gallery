@@ -87,7 +87,7 @@ tools/
   build-works.mjs   ← works/*.json から目次を組み立てる（書き方の点検もここ）
 docs/
   index.html        ← 一覧ページ（種類で見る / 地域で見る / さがす）
-  submit.html       ← 作品の出しかた（出す大人の方向け）
+  submit.html       ← 作品の出しかた（PR の出しかたの説明）
   works/            ← 作品。<id>.rb と <id>.json の 2 つで 1 件
   thumbs/           ← 絵（任意）。<id>.png
   images/           ← ロゴ
