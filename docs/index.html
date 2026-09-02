@@ -1,1 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.svg">
+<title>URB ギャラリー | みんなの作品</title>
+<style>
+/* ────────────────────────────────────────────────────────────
+   色は URB Block Lab と同じ「和歌山有田＝みかん」から。
+   別のリポジトリだが、子どもから見れば同じ 1 つのサイトなので、
+   ヘッダ・地の色・角の丸み・字づかいを向こうに合わせる。
+   ──────────────────────────────────────────────────────────── */
+:root {
+  --mikan:     #ff7a3d;   /* 主役。ヘッダ */
+  --mikan-dk:  #e8621f;
+  --sky:       #2b9fe0;
+  --leaf:      #3fb950;
+  --sun:       #ffd23f;
+  --ink:       #23384d;   /* 黒ではなく、やわらかい紺 */
+  --ink-soft:  #5b7288;
+  --paper:     #ffffff;
+  --ground:    #eef4fa;   /* 画面の地 */
+  --line:      #d3e2f0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--ground);
+  color: var(--ink);
+}
 
+/* ── ヘッダ（Block Lab と同じ形） ──────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 10px 20px;
+  background: var(--mikan);
+  border-bottom: 3px solid var(--mikan-dk);
+}
+header .brand {
+  flex: none;
+  height: 46px; width: auto;
+  margin-right: -8px;      /* h1 と近づけて 1 つのロゴに見せる */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.28));
+}
+header h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+header h1 span { color: var(--sun); }
+header .spacer { flex: 1; }
+header a {
+  color: #fff;
+  opacity: 0.9;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+header a:hover { opacity: 1; text-decoration: underline; }
+header a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; border-radius: 4px; }
+/* ヘッダ右の小さいボタン。Block Lab の .rb ボタンと同じ地に沈めた色。 */
+header .hdr-tools { display: flex; align-items: center; gap: 8px; }
+header .hdr-tools a {
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+header .hdr-tools a:hover { background: rgba(0, 0, 0, 0.28); text-decoration: none; }
+
+/* ── ページの見出しと道具立て ──────────────────────────────
+   見出しは文字ではなくロゴ。大きく出すと作品より目立つので、
+   左に置いて説明と探す道具を右に並べ、1 かたまりにする。 */
+.topbar {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.topbar .hero { flex: none; display: block; width: 210px; height: auto; margin-left: -8px; }
+.topbar .right { flex: 1 1 0; min-width: 0; }
+.topbar p { margin: 0 0 10px; color: var(--ink-soft); font-size: 0.88rem; line-height: 1.75; }
+
+.toolbar {
+  padding: 12px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+/* 狭い画面ではロゴを上に置いて、探す道具に幅を渡す。 */
+@media (max-width: 700px) {
+  .topbar { flex-direction: column; align-items: stretch; gap: 12px; }
+  .topbar .hero { width: 190px; }
+}
+
+.seg { display: flex; gap: 6px; }
+.seg button {
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.seg button:hover { background: #e3edf7; }
+.seg button[aria-pressed="true"] {
+  color: #fff;
+  background: var(--mikan);
+  border-color: var(--mikan-dk);
+}
+.seg button:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+#q {
+  flex: 1 1 200px; min-width: 160px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+}
+#q::placeholder { color: #9db0c4; }
+#q:focus { outline: none; background: var(--paper); border-color: var(--sky); }
+#count { color: var(--ink-soft); font-size: 0.82rem; white-space: nowrap; }
+
+/* ── 一覧 ──────────────────────────────────────────────────── */
+main { max-width: 1080px; margin: 0 auto; padding: 6px 24px 64px; }
+
+.group { margin-top: 26px; }
+.group > h3 {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 7px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.group > h3 span { color: var(--ink-soft); font-size: 0.78rem; font-weight: 600; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: block; text-decoration: none; color: inherit;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--mikan);
+  box-shadow: 0 8px 20px rgba(35, 56, 77, 0.14);
+}
+.card:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--ground);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* 絵がないときは、種類の色と題名でその場で描く */
+.thumb.auto {
+  background: linear-gradient(135deg, var(--kind) 0%, #fff 190%);
+  padding: 14px;
+}
+.thumb.auto span {
+  font-size: 1.05rem; font-weight: 700; line-height: 1.45;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.32);
+  text-align: center;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* パネルは絵と題名だけ。一度に何十件も見渡せることを、
+   1 件あたりの情報より優先する。説明・種類・タグはマウスを載せると出る。 */
+.body { padding: 9px 12px 11px; }
+.title, .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.title { font-size: 0.95rem; font-weight: 700; line-height: 1.4; }
+.who   { font-size: 0.76rem; color: var(--ink-soft); line-height: 1.5; margin-top: 1px; }
+
+.note {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sky);
+  border-radius: 0 12px 12px 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem; line-height: 1.9;
+  margin-top: 26px;
+  padding: 16px 18px;
+}
+.note code {
+  font-family: Consolas, 'SF Mono', Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--mikan-dk);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  padding: 18px 24px 40px;
+  text-align: center;
+}
+footer a { color: var(--sky); text-decoration: none; font-weight: 600; }
+footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="brand" src="images/UIAPduinoBlock-256.png" alt="" width="256" height="213">
+  <h1><span>URB</span> ギャラリー</h1>
+  <div class="spacer"></div>
+  <div class="hdr-tools">
+    <a href="/uiap-hid-web/uiapruby-block.html" target="_blank" rel="noopener">URB Block Lab をひらく</a>
+  </div>
+  <a href="/uiap-hid-web/" target="_blank" rel="noopener">← UIAPduino WebHID Lab</a>
+</header>
+
+<div class="topbar">
+  <img class="hero" src="images/urbgallery-640.png" alt="URB ギャラリー" width="640" height="512">
+  <div class="right">
+    <p>
+      UIAPduino で作ったプログラムが並んでいます。
+      パネルを選ぶと、新しいタブで URB Block Lab が開いて、その作品のブロックが出てきます。
+      好きなように直して、自分の作品にしてかまいません。
+    </p>
+    <div class="toolbar">
+      <div class="seg">
+        <button id="by-kind"   type="button" aria-pressed="true">種類で見る</button>
+        <button id="by-region" type="button" aria-pressed="false">地域で見る</button>
+      </div>
+      <input id="q" type="search" placeholder="題名・作った人・所属・タグ でさがす" autocomplete="off">
+      <div id="count"></div>
+    </div>
+  </div>
+</div>
+
+<main id="list"></main>
+
+<footer>
+  作品を出したい人は <a href="https://github.com/tarosay/urb-gallery" target="_blank" rel="noopener">urb-gallery</a> の README を見てください。
+</footer>
+
+<script>
+// ============================================================
+//  URB ギャラリー
+//    works.json を読んでパネルを並べるだけのページ。
+//    作品を足すときは works/<id>.rb を置いて works.json に 1 件書く。
+//    絵は thumbs/<id>.png。無ければ種類の色と題名でその場で描く。
+// ============================================================
+const LAB_BASE = '/uiap-hid-web/';   // 開く先。同じ github.io の中にある
+
+// 種類は決められた一覧から 1 つ。並び順もここで決まる。
+// 色は Block Lab のブロックの色から採って、同じ画面に見えるようにする。
+const KINDS = [
+  ['光る',           '#f0a51e'],
+  ['音',             '#d63fc4'],
+  ['うごく',         '#e8590c'],
+  ['はかる',         '#2b9fe0'],
+  ['ゲーム・あそび', '#3fb950'],
+  ['役に立つもの',   '#6b7fdb'],
+  ['その他',         '#5b7288'],
+];
+const KIND_COLOR = new Map(KINDS);
+
+// 地域は都道府県。並び順は北から南（JIS の順）。
+const REGIONS = [
+  '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+  '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+  '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県',
+  '岐阜県', '静岡県', '愛知県', '三重県',
+  '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県',
+  '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+  '徳島県', '香川県', '愛媛県', '高知県',
+  '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県',
+];
+
+let works = [];
+let mode  = 'kind';   // 'kind' か 'region'
+
+const listEl  = document.getElementById('list');
+const countEl = document.getElementById('count');
+const qEl     = document.getElementById('q');
+
+/** 検索用に 1 作品ぶんの文字を全部つないでおく。 */
+function haystack(w) {
+  return [w.title, w.author, w.group, w.region, w.kind, w.desc, ...(w.tags || [])]
+    .filter(Boolean).join(' ').toLowerCase();
+}
+
+function cardOf(w) {
+  const color = KIND_COLOR.get(w.kind) || '#5b7288';
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.style.setProperty('--kind', color);
+  // ブロックの作品は Block Lab で開く。それ以外は .rb そのものを渡す。
+  a.href = w.lab === 'block'
+    ? `${LAB_BASE}uiapruby-block.html?rb=${encodeURIComponent(w.id)}`
+    : `works/${encodeURIComponent(w.id)}.rb`;
+  a.target = '_blank';
+  a.rel = 'noopener';
+
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb';
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.alt = '';
+  img.src = `thumbs/${encodeURIComponent(w.id)}.png`;
+  // 絵が無いのは普通のこと。無ければ題名のカードに差し替える。
+  img.addEventListener('error', () => {
+    thumb.classList.add('auto');
+    thumb.textContent = '';
+    const s = document.createElement('span');
+    s.textContent = w.title || w.id;
+    thumb.appendChild(s);
+  });
+  thumb.appendChild(img);
+
+  const body = document.createElement('div');
+  body.className = 'body';
+
+  const title = document.createElement('div');
+  title.className = 'title';
+  title.textContent = w.title || w.id;
+  body.appendChild(title);
+
+  const who = document.createElement('div');
+  who.className = 'who';
+  who.textContent = [w.author, w.group, w.region].filter(Boolean).join(' / ');
+  body.appendChild(who);
+
+  // 説明・種類・タグはパネルに出さない。マウスを載せたときに出す。
+  // 出さないだけで、さがす窓からは今までどおり引っかかる。
+  a.title = [
+    w.title || w.id,
+    [w.author, w.group, w.region].filter(Boolean).join(' / '),
+    [w.kind, ...(w.tags || []).map(t => '#' + t)].filter(Boolean).join('  '),
+    w.desc,
+  ].filter(Boolean).join('\n');
+
+  a.appendChild(thumb);
+  a.appendChild(body);
+  return a;
+}
+
+/** 見出しの順番。決められた一覧に無いものは後ろにまとめる。 */
+function orderOf(name, order) {
+  const i = order.indexOf(name);
+  return i < 0 ? order.length : i;
+}
+
+function render() {
+  const q = qEl.value.trim().toLowerCase();
+  const shown = q ? works.filter(w => haystack(w).includes(q)) : works.slice();
+
+  countEl.textContent = q ? `${shown.length} / ${works.length} 件` : `${works.length} 件`;
+
+  listEl.textContent = '';
+
+  if (!works.length) {
+    listEl.innerHTML =
+      '<p class="note">まだ作品がありません。<br>' +
+      '<code>docs/works/</code> に <code>.rb</code> を置いて、' +
+      '<code>docs/works.json</code> に 1 件書くと、ここに並びます。</p>';
+    return;
+  }
+  if (!shown.length) {
+    listEl.innerHTML = '<p class="note">見つかりませんでした。</p>';
+    return;
+  }
+
+  const order = mode === 'kind' ? KINDS.map(k => k[0]) : REGIONS;
+  const key   = mode === 'kind' ? 'kind' : 'region';
+
+  const groups = new Map();
+  for (const w of shown) {
+    const g = w[key] || 'その他';
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(w);
+  }
+
+  const names = [...groups.keys()].sort((a, b) => {
+    const d = orderOf(a, order) - orderOf(b, order);
+    return d !== 0 ? d : a.localeCompare(b, 'ja');
+  });
+
+  for (const name of names) {
+    const items = groups.get(name);
+    items.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));   // 新しいものから
+
+    const sec = document.createElement('section');
+    sec.className = 'group';
+    const h = document.createElement('h3');
+    h.textContent = name;
+    const n = document.createElement('span');
+    n.textContent = `${items.length} 件`;
+    h.appendChild(n);
+    sec.appendChild(h);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    for (const w of items) grid.appendChild(cardOf(w));
+    sec.appendChild(grid);
+    listEl.appendChild(sec);
+  }
+}
+
+function setMode(next) {
+  mode = next;
+  document.getElementById('by-kind').setAttribute('aria-pressed', String(next === 'kind'));
+  document.getElementById('by-region').setAttribute('aria-pressed', String(next === 'region'));
+  render();
+}
+document.getElementById('by-kind').addEventListener('click', () => setMode('kind'));
+document.getElementById('by-region').addEventListener('click', () => setMode('region'));
+qEl.addEventListener('input', render);
+
+(async function boot() {
+  try {
+    const res = await fetch('works.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    works = Array.isArray(data.works) ? data.works.filter(w => w && w.id) : [];
+  } catch (e) {
+    console.error('[urb-gallery] works.json を読めませんでした:', e);
+    listEl.innerHTML = '<p class="note">作品の一覧を読めませんでした。しばらくしてから開きなおしてください。</p>';
+    return;
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
