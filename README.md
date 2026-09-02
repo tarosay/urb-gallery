@@ -14,23 +14,36 @@ UIAPduino で作ったプログラムを並べる**みんなの作品**のペー
 
 ---
 
-## 作品を足す
+## 作品を足す（プルリクエスト）
 
-1. 子が URB Block Lab の **`.rb` で保存**でファイルを作り、こちらに渡す
-2. そのファイルを `docs/works/<id>.rb` として置く（`<id>` は半角英数・`-`・`_`）
-3. 絵があれば `docs/thumbs/<id>.png` に置く（無くてよい。無ければ種類の色と題名でカードを描く）
-4. `docs/works.json` の `works` に 1 件足す
-5. commit して push する。GitHub Pages に反映されます
+**作品 1 件 = 新しいファイル 2 つだけ**です。すでにあるファイルには触りません。
+そうしてあるので、PR がいくつ重なっても衝突しません。
+
+1. 子が URB Block Lab の **`.rb` で保存**でファイルを作る
+2. `docs/works/<id>.rb` として置く（`<id>` は半角英数・`-`・`_`・`.`）
+3. 同じ名前で `docs/works/<id>.json` を書く（下の表）
+4. 絵があれば `docs/thumbs/<id>.png` に置く（無くてよい。無ければ種類の色と題名でカードを描く）
+5. プルリクエストを出す
+
+一覧ページが読む `docs/works.json`（目次）は、**書きません**。
+`tools/build-works.mjs` が `docs/works/*.json` から組み立て、
+GitHub Actions が配信のときに置きます。リポジトリには入っていません。
+
+PR を出すと Actions が同じ組み立てを走らせます。書き方に間違いがあればそこで止まり、
+どの作品の何が悪いかが出ます（種類が一覧に無い、都道府県の名前が違う、`.rb` が
+URB Block Lab のものではない、など）。
+
+> 手元で見るときは、先に `node tools/build-works.mjs` を 1 回走らせてください。
+> `docs/works.json` ができて、`docs/` を開けば一覧が出ます。
 
 `.rb` は URB Block Lab で保存したものを使ってください。
 末尾のコメント（`# urb-block/1 …`）にブロックが畳んで入っていて、
 ページはそこを読んでブロックに戻します。このコメントを消すと開けません。
 
-### works.json の書きかた
+### `works/<id>.json` の書きかた
 
 ```json
 {
-  "id": "sample-blink",
   "title": "1秒ごとに光る",
   "author": "みほん",
   "group": "UIAPduino",
@@ -45,7 +58,7 @@ UIAPduino で作ったプログラムを並べる**みんなの作品**のペー
 
 | 項目 | 中身 |
 |------|------|
-| `id` | ファイル名を兼ねます。`works/<id>.rb`、`thumbs/<id>.png` |
+| （ファイル名） | `id` は書きません。`works/<id>.json` の `<id>` がそのまま id になります |
 | `title` | 題名 |
 | `author` | 作った人。**ニックネームで**（公開されます） |
 | `group` | 所属（例: `CoderDojo 和歌山`）。無ければ省略可 |
@@ -65,16 +78,21 @@ UIAPduino で作ったプログラムを並べる**みんなの作品**のペー
 ## ファイル構成
 
 ```
+.github/workflows/
+  pages.yml         ← 目次を作って GitHub Pages に配る
+tools/
+  build-works.mjs   ← works/*.json から目次を組み立てる（書き方の点検もここ）
 docs/
   index.html        ← 一覧ページ（種類で見る / 地域で見る / さがす）
-  works.json        ← 作品の目次。ここに載っているものだけ並びます
-  works/            ← 作品の .rb
+  works/            ← 作品。<id>.rb と <id>.json の 2 つで 1 件
   thumbs/           ← 絵（任意）。<id>.png
+  images/           ← ロゴ
+  works.json        ← 目次。生成物なので追跡していません（.gitignore）
 ```
 
 一覧ページが読むのは `works.json` だけです。
 静的なページなので、フォルダを覗いて自動で並べることはできません。
-`works/` に置いただけでは出てこないので、`works.json` にも足してください。
+だから目次を作る手順が要るのですが、それは Actions の仕事にしてあります。
 
 ---
 

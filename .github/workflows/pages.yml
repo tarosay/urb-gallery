@@ -1,0 +1,55 @@
+# ============================================================
+#  目次を作って GitHub Pages に配る
+#
+#    docs/works.json はリポジトリに置かない。ここで組み立てて配る。
+#    リポジトリに置くと、作品を足す PR が全部そのファイルを触ることになり、
+#    重なったときに必ず衝突するため。
+#
+#    PR のときは組み立てまでで止める（配らない）。
+#    作品の書き方に間違いがあれば、ここで赤くなる。
+# ============================================================
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 目次（works.json）を作る
+        run: node tools/build-works.mjs
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    # 配るのは main に入ったときだけ。PR では上の build だけを走らせる。
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
