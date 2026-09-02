@@ -16,6 +16,9 @@ UIAPduino で作ったプログラムを並べる**みんなの作品**のペー
 
 ## 作品を足す（プルリクエスト）
 
+> 出す人向けの説明は <https://tarosay.github.io/urb-gallery/submit.html> にもあります
+> （ブラウザだけで PR を出す手順つき）。
+
 **作品 1 件 = 新しいファイル 2 つだけ**です。すでにあるファイルには触りません。
 そうしてあるので、PR がいくつ重なっても衝突しません。
 
@@ -84,6 +87,7 @@ tools/
   build-works.mjs   ← works/*.json から目次を組み立てる（書き方の点検もここ）
 docs/
   index.html        ← 一覧ページ（種類で見る / 地域で見る / さがす）
+  submit.html       ← 作品の出しかた（メンター・保護者向け）
   works/            ← 作品。<id>.rb と <id>.json の 2 つで 1 件
   thumbs/           ← 絵（任意）。<id>.png
   images/           ← ロゴ

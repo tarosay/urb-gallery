@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.svg">
+<title>作品を出す | URB ギャラリー</title>
+<style>
+/* 色と形は URB Block Lab / 一覧ページと同じ。別ページに見せない。 */
+:root {
+  --mikan:     #ff7a3d;
+  --mikan-dk:  #e8621f;
+  --sky:       #2b9fe0;
+  --leaf:      #3fb950;
+  --sun:       #ffd23f;
+  --ink:       #23384d;
+  --ink-soft:  #5b7288;
+  --paper:     #ffffff;
+  --ground:    #eef4fa;
+  --line:      #d3e2f0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--ground);
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+/* ── ヘッダ ────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 10px 20px;
+  background: var(--mikan);
+  border-bottom: 3px solid var(--mikan-dk);
+}
+header .brand {
+  flex: none;
+  height: 46px; width: auto;
+  margin-right: -8px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.28));
+}
+header h1 {
+  margin: 0;
+  font-size: 1.15rem; font-weight: 700; color: #fff;
+  white-space: nowrap; letter-spacing: 0.01em;
+}
+header h1 span { color: var(--sun); }
+header .spacer { flex: 1; }
+header a { color: #fff; opacity: 0.9; text-decoration: none; font-size: 0.88rem; font-weight: 600; white-space: nowrap; }
+header a:hover { opacity: 1; text-decoration: underline; }
+header .hdr-tools a {
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.82rem; font-weight: 700;
+}
+header .hdr-tools a:hover { background: rgba(0, 0, 0, 0.28); text-decoration: none; }
+
+/* ── 本文 ──────────────────────────────────────────────────── */
+main { max-width: 820px; margin: 0 auto; padding: 28px 24px 72px; }
+
+h2 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+}
+.sub { margin: 0 0 26px; color: var(--ink-soft); font-size: 0.95rem; }
+
+h3 {
+  margin: 34px 0 10px;
+  font-size: 1.1rem;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 7px;
+}
+h4 { margin: 22px 0 6px; font-size: 0.98rem; }
+p  { margin: 0 0 12px; font-size: 0.94rem; }
+ul, ol { margin: 0 0 12px; padding-left: 1.5em; font-size: 0.94rem; }
+li { margin-bottom: 5px; }
+
+code {
+  font-family: Consolas, 'SF Mono', Menlo, monospace;
+  font-size: 0.88em;
+  color: var(--mikan-dk);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+pre {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow-x: auto;
+  font-family: Consolas, 'SF Mono', Menlo, monospace;
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+pre code { border: none; background: none; padding: 0; color: var(--ink); font-size: 1em; }
+
+/* 手順。番号を丸で出して、どこまでやったか目で追えるようにする。 */
+ol.steps { list-style: none; margin: 0 0 16px; padding: 0; counter-reset: step; }
+ol.steps > li {
+  position: relative;
+  counter-increment: step;
+  margin: 0 0 12px;
+  padding: 13px 16px 13px 54px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+ol.steps > li::before {
+  content: counter(step);
+  position: absolute; left: 15px; top: 12px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--mikan); color: #fff;
+  font-size: 0.86rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+ol.steps b { display: block; margin-bottom: 2px; }
+ol.steps p:last-child, ol.steps ul:last-child { margin-bottom: 0; }
+
+.note, .warn {
+  margin: 0 0 16px;
+  padding: 13px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sky);
+  border-radius: 0 12px 12px 0;
+  font-size: 0.9rem;
+}
+.warn { border-left-color: var(--mikan); }
+.note p:last-child, .warn p:last-child { margin-bottom: 0; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 0.9rem; }
+th, td { border: 1px solid var(--line); padding: 8px 11px; text-align: left; vertical-align: top; }
+th { background: var(--paper); white-space: nowrap; }
+td { background: var(--paper); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
+.tags span {
+  font-size: 0.84rem; font-weight: 700;
+  border-radius: 999px; padding: 4px 12px;
+  color: #fff;
+}
+
+.copy {
+  font-family: inherit; font-size: 0.82rem; font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  margin: -6px 0 16px;
+}
+.copy:hover { background: var(--ground); color: var(--mikan-dk); border-color: var(--mikan); }
+
+footer {
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  padding: 18px 24px 40px;
+  text-align: center;
+}
+footer a { color: var(--sky); text-decoration: none; font-weight: 600; }
+footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="brand" src="images/UIAPduinoBlock-256.png" alt="" width="256" height="213">
+  <h1><span>URB</span> ギャラリー</h1>
+  <div class="spacer"></div>
+  <div class="hdr-tools">
+    <a href="./">← 作品の一覧にもどる</a>
+  </div>
+</header>
+
+<main>
+
+<h2>作品を出す</h2>
+<p class="sub">
+  ギャラリーに並べたい作品の出しかたです。出すのは、道場のメンターや保護者の方にお願いしています。
+</p>
+
+<div class="warn">
+  <p>
+    <b>作った人の名前は、ニックネームにしてください。</b>
+    ここに書いたことは誰でも見られる場所に出ます。本名・学校名・住所は書かないでください。
+  </p>
+</div>
+
+<h3>まず、作品のファイルを作る</h3>
+
+<p>
+  子が <a href="/uiap-hid-web/uiapruby-block.html" target="_blank" rel="noopener">URB Block Lab</a> で
+  <b>「.rb で保存」</b>を押すと、作品のファイルができます。これを受け取ってください。
+</p>
+
+<div class="note">
+  <p>
+    この <code>.rb</code> は、そのまま動く Ruby の後ろに、ブロックの並びが
+    <code># urb-block/1 …</code> というコメントで畳んで入っています。
+    ギャラリーはそこを読んでブロックに戻すので、<b>このコメントを消すと開けなくなります</b>。
+    メモ帳などで開いて消さないでください。
+  </p>
+</div>
+
+<h3>出しかた（GitHub のプルリクエスト）</h3>
+
+<p>
+  作品 1 件は<b>新しいファイル 2 つ</b>です。すでにあるファイルには触りません。
+  そうしてあるので、何人が同時に出しても、ぶつかりません。
+</p>
+
+<ol class="steps">
+  <li>
+    <b>名前（id）を決める</b>
+    <p>
+      半角英数と <code>-</code> <code>_</code> <code>.</code> だけで、短くつけます（例: <code>blink-taro</code>）。
+      ファイル名と、ページのアドレスに使われます。すでにある作品と同じ名前にはできません。
+    </p>
+  </li>
+  <li>
+    <b>2 つのファイルを置く</b>
+    <ul>
+      <li><code>docs/works/&lt;id&gt;.rb</code> — 受け取った <code>.rb</code> の名前を変えたもの</li>
+      <li><code>docs/works/&lt;id&gt;.json</code> — 下の書きかたで作る</li>
+    </ul>
+    <p>絵を付けたいときは <code>docs/thumbs/&lt;id&gt;.png</code> も置きます（無くてかまいません）。</p>
+  </li>
+  <li>
+    <b>プルリクエストを出す</b>
+    <p>
+      <a href="https://github.com/tarosay/urb-gallery" target="_blank" rel="noopener">urb-gallery</a> に対して出してください。
+      GitHub のページ上だけでもできます（次の節）。
+    </p>
+  </li>
+  <li>
+    <b>点検が通るのを見る</b>
+    <p>
+      プルリクエストを出すと、書きかたの点検が自動で走ります。緑になれば大丈夫です。
+      赤くなったら、何が悪いかがそこに出ます。
+    </p>
+  </li>
+</ol>
+
+<h4>GitHub のページ上だけで出す</h4>
+
+<p>Git のコマンドは要りません。ブラウザだけで最後まで進められます。</p>
+
+<ol>
+  <li><a href="https://github.com/tarosay/urb-gallery" target="_blank" rel="noopener">urb-gallery</a> を開いて、右上の <b>Fork</b> を押す（自分のコピーができます）</li>
+  <li>コピーのほうで <code>docs/works</code> フォルダを開き、<b>Add file → Upload files</b> で <code>&lt;id&gt;.rb</code> を置く</li>
+  <li>同じ所で <b>Add file → Create new file</b> を選び、名前を <code>&lt;id&gt;.json</code> にして、下のひな形を貼って書き換える</li>
+  <li>画面の下で <b>Commit changes</b>（新しいブランチを作る方を選んでおくと安全です）</li>
+  <li><b>Contribute → Open pull request</b> を押す</li>
+</ol>
+
+<h3><code>&lt;id&gt;.json</code> の書きかた</h3>
+
+<pre id="tmpl"><code>{
+  "title": "1秒ごとに光る",
+  "author": "たろう",
+  "group": "CoderDojo 和歌山",
+  "region": "和歌山県",
+  "kind": "光る",
+  "desc": "ピン2につないだ LED を、1秒ごとに点けたり消したりします。",
+  "tags": ["LED", "はじめて"],
+  "lab": "block",
+  "date": "2026-09-03"
+}</code></pre>
+<button class="copy" type="button" id="btn-copy">ひな形をコピーする</button>
+
+<table>
+  <tr><th>項目</th><th>中身</th></tr>
+  <tr><td>（ファイル名）</td><td><code>id</code> は書きません。<code>&lt;id&gt;.json</code> の <code>&lt;id&gt;</code> がそのまま使われます</td></tr>
+  <tr><td><code>title</code></td><td>題名</td></tr>
+  <tr><td><code>author</code></td><td>作った人。<b>ニックネームで</b></td></tr>
+  <tr><td><code>group</code></td><td>所属（例: <code>CoderDojo 和歌山</code>）。無ければ省略できます</td></tr>
+  <tr><td><code>region</code></td><td>都道府県。<b>「県」「府」「都」まで</b>書きます（「和歌山」だけでは点検で止まります）</td></tr>
+  <tr><td><code>kind</code></td><td>種類。下の 7 つから 1 つ</td></tr>
+  <tr><td><code>desc</code></td><td>ひとこと説明</td></tr>
+  <tr><td><code>tags</code></td><td>自由に何個でも。<b><code>#</code> は付けません</b>（出すときに付きます）</td></tr>
+  <tr><td><code>lab</code></td><td><code>block</code>（URB Block Lab で作ったもの）</td></tr>
+  <tr><td><code>date</code></td><td>作った日。<code>2026-09-03</code> の形で</td></tr>
+</table>
+
+<h4>種類</h4>
+<div class="tags">
+  <span style="background:#f0a51e">光る</span>
+  <span style="background:#d63fc4">音</span>
+  <span style="background:#e8590c">うごく</span>
+  <span style="background:#2b9fe0">はかる</span>
+  <span style="background:#3fb950">ゲーム・あそび</span>
+  <span style="background:#6b7fdb">役に立つもの</span>
+  <span style="background:#5b7288">その他</span>
+</div>
+
+<h3>点検で止まったら</h3>
+
+<p>よくあるのは次のものです。書き直して、もう一度置けば通ります。</p>
+
+<table>
+  <tr><th>出るもの</th><th>直しかた</th></tr>
+  <tr><td><code>&lt;id&gt;.rb がありません</code></td><td><code>.json</code> と <code>.rb</code> の名前を同じにします</td></tr>
+  <tr><td><code>kind「…」は種類の一覧にありません</code></td><td>上の 7 つのどれかにします</td></tr>
+  <tr><td><code>region「…」は都道府県ではありません</code></td><td>「和歌山県」のように最後まで書きます</td></tr>
+  <tr><td><code>tags に # は付けません</code></td><td><code>["LED"]</code> のように書きます</td></tr>
+  <tr><td><code>.rb に「# urb-block/1 …」の行がありません</code></td><td>URB Block Lab の「.rb で保存」で出したファイルを置きます</td></tr>
+</table>
+
+<h3>入ったあと</h3>
+
+<p>
+  プルリクエストが取り込まれると、<b>一覧は自動で作り直されます</b>。
+  目次のファイルを誰かが書き足す必要はありません。しばらくすると
+  <a href="./">作品の一覧</a>に並びます。
+</p>
+
+</main>
+
+<footer>
+  くわしい仕組みは <a href="https://github.com/tarosay/urb-gallery" target="_blank" rel="noopener">urb-gallery</a> の README にあります。
+</footer>
+
+<script>
+// ひな形は手で選ぶと行がずれやすい。ボタン 1 つで写せるようにしておく。
+const btn = document.getElementById('btn-copy');
+btn.addEventListener('click', async () => {
+  const text = document.querySelector('#tmpl code').textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = 'コピーしました';
+  } catch (e) {
+    btn.textContent = 'コピーできませんでした。手で選んでください';
+  }
+  setTimeout(() => { btn.textContent = 'ひな形をコピーする'; }, 2000);
+});
+</script>
+
+</body>
+</html>
