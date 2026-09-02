@@ -16,9 +16,10 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT  = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const WORKS = path.join(ROOT, 'docs', 'works');
-const OUT   = path.join(ROOT, 'docs', 'works.json');
+const ROOT   = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const WORKS  = path.join(ROOT, 'docs', 'works');
+const THUMBS = path.join(ROOT, 'docs', 'thumbs');
+const OUT    = path.join(ROOT, 'docs', 'works.json');
 
 // 種類は決められた一覧から 1 つ。docs/index.html の KINDS と同じ並び。
 const KINDS = ['光る', '音', 'うごく', 'はかる', 'ゲーム・あそび', '役に立つもの', 'その他'];
@@ -108,6 +109,28 @@ const works = (await Promise.all(ids.map(readWork))).filter(Boolean);
 
 // 新しいものが先。同じ日なら id 順で、並びが日によって変わらないようにする。
 works.sort((a, b) => (a.date === b.date ? a.id.localeCompare(b.id) : b.date.localeCompare(a.date)));
+
+// 絵は無くてもよいが、名前が作品とずれていると、置いた本人は気づけない。
+// ページは黙って自動のカードを描くだけなので、ここで拾う。
+const known = new Set(works.map(w => w.id));
+let thumbs = [];
+try {
+  thumbs = await readdir(THUMBS);
+} catch (e) {
+  thumbs = [];   // まだ 1 枚も置かれていない
+}
+for (const f of thumbs) {
+  if (f.startsWith('.')) continue;                       // .gitkeep など
+  if (!f.toLowerCase().endsWith('.png')) {
+    fail(f, `docs/thumbs/ に置けるのは .png だけです`);
+    continue;
+  }
+  const id = f.slice(0, -4);
+  if (!known.has(id)) {
+    fail(f, `対応する作品がありません。作品と同じ名前（${id}.rb と ${id}.json）に` +
+            `なっているか確かめてください`);
+  }
+}
 
 if (problems.length) {
   console.error('作品の書き方に問題があります:\n');
