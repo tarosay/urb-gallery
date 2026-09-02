@@ -64,7 +64,7 @@ URB Block Lab のものではない、など）。
 | （ファイル名） | `id` は書きません。`works/<id>.json` の `<id>` がそのまま id になります |
 | `title` | 題名 |
 | `author` | 作った人。**ニックネームで**（公開されます） |
-| `group` | 所属（例: `CoderDojo 和歌山`）。無ければ省略可 |
+| `group` | 所属（教室・クラブ・学校など）。無ければ省略可 |
 | `region` | 都道府県。「地域で見る」の見出しになります |
 | `kind` | 種類。下の一覧から 1 つ |
 | `desc` | ひとこと説明 |
@@ -87,7 +87,7 @@ tools/
   build-works.mjs   ← works/*.json から目次を組み立てる（書き方の点検もここ）
 docs/
   index.html        ← 一覧ページ（種類で見る / 地域で見る / さがす）
-  submit.html       ← 作品の出しかた（メンター・保護者向け）
+  submit.html       ← 作品の出しかた（出す大人の方向け）
   works/            ← 作品。<id>.rb と <id>.json の 2 つで 1 件
   thumbs/           ← 絵（任意）。<id>.png
   images/           ← ロゴ
