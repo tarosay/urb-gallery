@@ -36,6 +36,10 @@ PR を出すと Actions が同じ組み立てを走らせます。書き方に�
 どの作品の何が悪いかが出ます（種類が一覧に無い、都道府県の名前が違う、`.rb` が
 URB Block Lab のものではない、など）。
 
+作品を下げるときも PR です。`docs/works/<id>.rb` `docs/works/<id>.json` と、置いていれば
+`docs/thumbs/<id>.png` を**まとめて**消します。片方だけ残ると点検で止まります。
+消す PR は赤くなりませんが、何を消したかがコメントに出ます。
+
 > 手元で見るときは、先に `node tools/build-works.mjs` を 1 回走らせてください。
 > `docs/works.json` ができて、`docs/` を開けば一覧が出ます。
 

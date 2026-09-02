@@ -6,7 +6,8 @@
 //    作品を出すつもりの PR に、ページ本体やワークフローの書き換えが
 //    まぎれこむのを防ぐため。
 //
-//    人の作品を消す変更も、同じように目立たせる。
+//    作品を消す PR もあるので、消すこと自体は赤にしない。
+//    ただし見落とされると困るので、消した分は目立つように書き出す。
 //
 //    使い方:  BASE_SHA=<比べる先> node tools/check-pr.mjs
 //    （BASE_SHA が無ければ origin/main と比べる）
@@ -49,6 +50,7 @@ function pngSize(file) {
 
 const problems = [];
 const notes = [];
+const removed = [];
 
 const diff = git('diff', '--name-status', '-M', `${baseCommit()}...HEAD`);
 const changed = diff
@@ -79,8 +81,10 @@ for (const { status, file } of changed) {
     continue;
   }
 
+  // 消すのは正しい PR もある（自分の作品を下げたい、など）。
+  // 赤にはせず、マージする人の目に入る形にしておく。
   if (status === 'D') {
-    problems.push(`${file} を消しています。人の作品を消す変更が入っていないか確かめてください`);
+    removed.push(file);
     continue;
   }
 
@@ -114,6 +118,13 @@ for (const { status, file } of changed) {
 
 for (const n of notes) console.log('  ' + n);
 if (notes.length) console.log('');
+
+if (removed.length) {
+  console.log('この PR は、次のファイルを消しています:');
+  for (const f of removed) console.log('  - ' + f);
+  console.log('消してよいものか確かめてから、マージしてください。');
+  console.log('');
+}
 
 if (problems.length) {
   console.error('この PR には、作品を出す以外の変更が入っています:\n');

@@ -333,6 +333,24 @@ footer a:hover { text-decoration: underline; }
   <tr><td><code>対応する作品がありません</code></td><td>絵の名前を作品と同じにします（<code>&lt;id&gt;.png</code>）</td></tr>
 </table>
 
+<h3>作品を下げたいとき</h3>
+
+<p>
+  出した作品を消したくなったら、これもプルリクエストで出します。消すのは<b>その作品のファイルだけ</b>です。
+</p>
+
+<ul>
+  <li><code>docs/works/&lt;id&gt;.rb</code></li>
+  <li><code>docs/works/&lt;id&gt;.json</code></li>
+  <li><code>docs/thumbs/&lt;id&gt;.png</code>（置いていた場合）</li>
+</ul>
+
+<p>
+  <b>3 つとも消してください。</b>片方だけ残っていると点検で止まります。
+  消す PR は点検では赤くなりませんが、何を消したかがコメントに出るので、
+  取り込む前に人が確かめます。
+</p>
+
 <h3>入ったあと</h3>
 
 <p>

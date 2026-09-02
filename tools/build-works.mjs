@@ -100,10 +100,21 @@ async function readWork(id) {
   };
 }
 
-const ids = (await readdir(WORKS))
+const inWorks = await readdir(WORKS);
+
+const ids = inWorks
   .filter(f => f.endsWith('.json'))
   .map(f => f.slice(0, -5))
   .sort();
+
+// .json を消して .rb だけ残ると、一覧からは消えるがファイルは残り続ける。
+// 目次は .json しか見ないので、ここで拾わないと誰も気づかない。
+const idSet = new Set(ids);
+for (const f of inWorks) {
+  if (!f.endsWith('.rb')) continue;
+  const id = f.slice(0, -3);
+  if (!idSet.has(id)) fail(f, `${id}.json がありません。作品を消すなら .rb も一緒に消してください`);
+}
 
 const works = (await Promise.all(ids.map(readWork))).filter(Boolean);
 
