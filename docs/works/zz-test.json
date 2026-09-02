@@ -2,10 +2,10 @@
   "title": "点検のテスト",
   "author": "てすと",
   "group": "CoderDojo 和歌山",
-  "region": "和歌山",
+  "region": "和歌山県",
   "kind": "光る",
   "desc": "PR の点検が動くか見るための、仮の作品です。",
-  "tags": ["#テスト"],
+  "tags": ["テスト"],
   "lab": "block",
   "date": "2026-09-03"
 }
