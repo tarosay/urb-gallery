@@ -229,12 +229,23 @@ main { max-width: 1080px; margin: 0 auto; padding: 6px 24px 64px; }
 footer {
   border-top: 1px solid var(--line);
   color: var(--ink-soft);
-  font-size: 0.8rem;
-  padding: 18px 24px 40px;
+  padding: 26px 24px 48px;
   text-align: center;
 }
-footer a { color: var(--sky); text-decoration: none; font-weight: 600; }
-footer a:hover { text-decoration: underline; }
+footer p { margin: 0 0 12px; font-size: 0.9rem; }
+/* 「作品を出す」への入口。文章の中のリンクだと気づかれないので、押せる形にする。 */
+footer .cta {
+  display: inline-block;
+  background: var(--mikan);
+  border: 2px solid var(--mikan-dk);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.92rem; font-weight: 700;
+  padding: 9px 22px;
+  text-decoration: none;
+}
+footer .cta:hover { background: var(--mikan-dk); }
+footer .cta:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -271,7 +282,8 @@ footer a:hover { text-decoration: underline; }
 <main id="list"></main>
 
 <footer>
-  作品を出したい人は <a href="submit.html">作品を出す</a> を見てください。
+  <p>あなたが作ったプログラムも、ここに並べられます。</p>
+  <a class="cta" href="submit.html">作品の出しかたを見る</a>
 </footer>
 
 <script>
