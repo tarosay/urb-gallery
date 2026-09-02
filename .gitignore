@@ -144,3 +144,7 @@ vite.config.ts.timestamp-*
 
 # 目次は tools/build-works.mjs が作る。リポジトリには置かない。
 docs/works.json
+
+# 点検が PR に貼る文章（Actions が作る）
+comment.md
+pr.txt

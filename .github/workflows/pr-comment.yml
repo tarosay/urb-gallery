@@ -1,0 +1,54 @@
+# ============================================================
+#  点検の結果を PR に貼る
+#
+#    点検そのものは Pages ワークフローの check ジョブが済ませていて、
+#    ここは貼るだけ。分けてあるのは、フォークから出された PR では
+#    点検を走らせるジョブに書き込む権限が無いため。
+#    workflow_run は元のリポジトリ側で動くので、こちらは書き込める。
+#
+#    PR のファイルは触らない（受け取るのは点検が作った文章だけ）。
+# ============================================================
+name: PR コメント
+
+on:
+  workflow_run:
+    workflows: ["Pages"]
+    types: [completed]
+
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      actions: read
+    steps:
+      - name: 点検の結果を受け取る
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-check
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 同じ PR に何度も貼らない。2 回目からは前のコメントを書きかえる。
+      - name: 貼る（2 回目からは書きかえ）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          n=$(cat pr.txt)
+          if [ -z "$n" ]; then echo "PR 番号が取れませんでした"; exit 1; fi
+
+          jq -Rs '{body: .}' comment.md > body.json
+
+          id=$(gh api "repos/$REPO/issues/$n/comments" --paginate \
+                 --jq '.[] | select(.body | contains("<!-- urb-gallery-check -->")) | .id' \
+               | head -1)
+
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" --input body.json --silent
+            echo "PR #$n のコメント $id を書きかえました"
+          else
+            gh api -X POST "repos/$REPO/issues/$n/comments" --input body.json --silent
+            echo "PR #$n にコメントしました"
+          fi

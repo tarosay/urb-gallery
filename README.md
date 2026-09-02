@@ -82,9 +82,12 @@ URB Block Lab のものではない、など）。
 
 ```
 .github/workflows/
-  pages.yml         ← 目次を作って GitHub Pages に配る
+  pages.yml         ← 点検して、目次を作って GitHub Pages に配る
+  pr-comment.yml    ← 点検の結果を PR に貼る（フォークからの PR でも貼れるよう別立て）
 tools/
-  build-works.mjs   ← works/*.json から目次を組み立てる（書き方の点検もここ）
+  build-works.mjs   ← works/*.json から目次を組み立てる（書きかたの点検もここ）
+  check-pr.mjs      ← PR が作品の置き場所だけを触っているかを見る
+  pr-report.mjs     ← 上の 2 つを走らせて、PR に貼る文章を作る
 docs/
   index.html        ← 一覧ページ（種類で見る / 地域で見る / さがす）
   submit.html       ← 作品の出しかた（PR の出しかたの説明）

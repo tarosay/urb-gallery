@@ -37,10 +37,25 @@ jobs:
         with:
           node-version: '20'
 
-      - name: 触っているファイルを見る
+      - name: 点検して、PR に貼る文章を作る
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: node tools/check-pr.mjs
+        run: node tools/pr-report.mjs
+
+      # 赤でも青でも渡す。貼るのは pr-comment.yml の仕事。
+      # フォークからの PR では、このジョブに PR へ書き込む権限が無い。
+      - name: 結果を渡す
+        if: always()
+        run: echo "${{ github.event.pull_request.number }}" > pr.txt
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-check
+          path: |
+            comment.md
+            pr.txt
+          retention-days: 3
 
   build:
     runs-on: ubuntu-latest
