@@ -1,0 +1,14 @@
+{
+  "title": "虹色の回転",
+  "author": "たろサ",
+  "group": "CoderDojo和歌山有田",
+  "region": "和歌山県",
+  "kind": "光る",
+  "desc": "12個の NeoPixel の虹を、右に12回・左に12回まわします。",
+  "tags": [
+    "NeoPixel",
+    "虹"
+  ],
+  "lab": "block",
+  "date": "2026-09-04"
+}
