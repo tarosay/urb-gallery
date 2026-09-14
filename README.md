@@ -97,7 +97,7 @@ docs/
   submit.html       ← 作品の出しかた（PR の出しかたの説明）
   works/            ← 作品。<id>.rb と <id>.json の 2 つで 1 件
   thumbs/           ← 絵（任意）。<id>.png
-  images/           ← ロゴ
+  images/           ← ロゴと、SNS のリンクカード画像（urbgallery_banner.png）
   works.json        ← 目次。生成物なので追跡していません（.gitignore）
 ```
 
