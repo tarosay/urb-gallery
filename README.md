@@ -25,7 +25,8 @@ UIAPduino で作ったプログラムを並べる**みんなの作品**のペー
 1. URB Block Lab の **`.rb` で保存**でファイルを作る（ほかの人の作品を代わりに出すときは、そのファイルを受け取る）
 2. `docs/works/<id>.rb` として置く（`<id>` は半角英数・`-`・`_`・`.`）
 3. 同じ名前で `docs/works/<id>.json` を書く（下の表）
-4. 絵があれば `docs/thumbs/<id>.png` に置く（無くてよい。無ければ種類の色と題名でカードを描く）
+4. 絵があれば `docs/thumbs/<id>.png` か `docs/thumbs/<id>.jpg` に置く（1 作品 1 枚。512 KB・縦横 2000 px まで。
+   無くてよい。無ければ種類の色と題名でカードを描く）
 5. プルリクエストを出す
 
 一覧ページが読む `docs/works.json`（目次）は、**書きません**。
@@ -37,7 +38,7 @@ PR を出すと Actions が同じ組み立てを走らせます。書き方に�
 URB Block Lab のものではない、など）。
 
 作品を下げるときも PR です。`docs/works/<id>.rb` `docs/works/<id>.json` と、置いていれば
-`docs/thumbs/<id>.png` を**まとめて**消します。片方だけ残ると点検で止まります。
+`docs/thumbs/<id>.png`（`.jpg`）を**まとめて**消します。片方だけ残ると点検で止まります。
 消す PR は赤くなりませんが、何を消したかがコメントに出ます。
 
 > 手元で見るときは、先に `node tools/build-works.mjs` を 1 回走らせてください。
@@ -96,7 +97,7 @@ docs/
   index.html        ← 一覧ページ（種類で見る / 地域で見る / さがす）
   submit.html       ← 作品の出しかた（PR の出しかたの説明）
   works/            ← 作品。<id>.rb と <id>.json の 2 つで 1 件
-  thumbs/           ← 絵（任意）。<id>.png
+  thumbs/           ← 絵（任意）。<id>.png か <id>.jpg
   images/           ← ロゴと、SNS のリンクカード画像（urbgallery_banner.png）、ファビコン（urbgallery-icon-32.png）
   works.json        ← 目次。生成物なので追跡していません（.gitignore）
 ```

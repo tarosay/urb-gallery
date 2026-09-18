@@ -36,6 +36,9 @@ const REGIONS = [
   '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県',
 ];
 
+// 絵に使える拡張子。tools/check-pr.mjs の ALLOW と同じ。
+const THUMB_EXTS = ['.png', '.jpg', '.jpeg'];
+
 const ID_RE   = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const RB_LINE = /^#\s*urb-block\/1\s+[A-Za-z0-9+/=]+\s*$/m;
@@ -97,6 +100,7 @@ async function readWork(id) {
     tags,
     lab,
     date:   meta.date,
+    thumb:  '',   // 絵のファイル名。下で docs/thumbs/ を見て埋める
   };
 }
 
@@ -123,7 +127,9 @@ works.sort((a, b) => (a.date === b.date ? a.id.localeCompare(b.id) : b.date.loca
 
 // 絵は無くてもよいが、名前が作品とずれていると、置いた本人は気づけない。
 // ページは黙って自動のカードを描くだけなので、ここで拾う。
-const known = new Set(works.map(w => w.id));
+// 拡張子は png か jpg なので、どちらを置いたかを目次に書いておく。
+// ページは書いてある名前をそのまま読む（無い作品は読みにいかない）。
+const byId = new Map(works.map(w => [w.id, w]));
 let thumbs = [];
 try {
   thumbs = await readdir(THUMBS);
@@ -132,14 +138,20 @@ try {
 }
 for (const f of thumbs) {
   if (f.startsWith('.')) continue;                       // .gitkeep など
-  if (!f.toLowerCase().endsWith('.png')) {
-    fail(f, `docs/thumbs/ に置けるのは .png だけです`);
+  const ext = path.extname(f);
+  if (!THUMB_EXTS.includes(ext.toLowerCase())) {
+    fail(f, `docs/thumbs/ に置けるのは ${THUMB_EXTS.join(' ')} だけです`);
     continue;
   }
-  const id = f.slice(0, -4);
-  if (!known.has(id)) {
+  const id = f.slice(0, -ext.length);
+  const w = byId.get(id);
+  if (!w) {
     fail(f, `対応する作品がありません。作品と同じ名前（${id}.rb と ${id}.json）に` +
             `なっているか確かめてください`);
+  } else if (w.thumb) {
+    fail(f, `${id} の絵が 2 つあります（${w.thumb} と ${f}）。1 つにしてください`);
+  } else {
+    w.thumb = f;
   }
 }
 

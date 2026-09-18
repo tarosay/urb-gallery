@@ -262,7 +262,10 @@ footer a:hover { text-decoration: underline; }
       <li><code>docs/works/&lt;id&gt;.rb</code> — 保存した <code>.rb</code> の名前を変えたもの</li>
       <li><code>docs/works/&lt;id&gt;.json</code> — 下の書きかたで作る</li>
     </ul>
-    <p>絵を付けたいときは <code>docs/thumbs/&lt;id&gt;.png</code> も置きます（無くてかまいません）。</p>
+    <p>
+      絵を付けたいときは <code>docs/thumbs/&lt;id&gt;.png</code> か <code>docs/thumbs/&lt;id&gt;.jpg</code> も置きます（無くてかまいません）。
+      1 つの作品に絵は 1 枚です。大きさは 512 KB まで、縦横は 2000 px までにしてください。
+    </p>
   </li>
   <li>
     <b>プルリクエストを出す</b>
@@ -343,7 +346,8 @@ footer a:hover { text-decoration: underline; }
   <tr><td><code>region「…」は都道府県ではありません</code></td><td>「和歌山県」のように最後まで書きます</td></tr>
   <tr><td><code>tags に # は付けません</code></td><td><code>["LED"]</code> のように書きます</td></tr>
   <tr><td><code>.rb に「# urb-block/1 …」の行がありません</code></td><td>URB Block Lab の「.rb で保存」で出したファイルを置きます</td></tr>
-  <tr><td><code>対応する作品がありません</code></td><td>絵の名前を作品と同じにします（<code>&lt;id&gt;.png</code>）</td></tr>
+  <tr><td><code>対応する作品がありません</code></td><td>絵の名前を作品と同じにします（<code>&lt;id&gt;.png</code> か <code>&lt;id&gt;.jpg</code>）</td></tr>
+  <tr><td><code>絵が 2 つあります</code></td><td><code>.png</code> と <code>.jpg</code> のどちらか 1 つを消します</td></tr>
 </table>
 
 <h3>作品を下げたいとき</h3>
@@ -355,7 +359,7 @@ footer a:hover { text-decoration: underline; }
 <ul>
   <li><code>docs/works/&lt;id&gt;.rb</code></li>
   <li><code>docs/works/&lt;id&gt;.json</code></li>
-  <li><code>docs/thumbs/&lt;id&gt;.png</code>（置いていた場合）</li>
+  <li><code>docs/thumbs/&lt;id&gt;.png</code> か <code>.jpg</code>（置いていた場合）</li>
 </ul>
 
 <p>

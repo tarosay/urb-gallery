@@ -22,11 +22,17 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // 置いてよい場所と、置いてよい拡張子
 const ALLOW = [
   { dir: 'docs/works/',  exts: ['.rb', '.json'] },
-  { dir: 'docs/thumbs/', exts: ['.png'] },
+  { dir: 'docs/thumbs/', exts: ['.png', '.jpg', '.jpeg'] },
 ];
 
 // 大きすぎるファイルは、置き間違いか、ここに置くべきでないもの
-const MAX = { '.rb': 256 * 1024, '.json': 8 * 1024, '.png': 512 * 1024 };
+const MAX = {
+  '.rb':   256 * 1024,
+  '.json':   8 * 1024,
+  '.png':  512 * 1024,
+  '.jpg':  512 * 1024,
+  '.jpeg': 512 * 1024,
+};
 const MAX_PX = 2000;   // 絵の縦横
 
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
@@ -46,6 +52,28 @@ function pngSize(file) {
   const sig = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
   if (buf.length < 24 || !buf.subarray(0, 8).equals(sig)) return null;
   return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+}
+
+/** JPEG かどうかと、縦横を見る。縦横は SOF のマーカーの中にあるので、頭から順にたどる。 */
+function jpegSize(file) {
+  const buf = readFileSync(file);
+  if (buf.length < 4 || buf[0] !== 0xff || buf[1] !== 0xd8) return null;
+  let i = 2;
+  while (i + 4 <= buf.length) {
+    if (buf[i] !== 0xff) return null;
+    const m = buf[i + 1];
+    if (m === 0xff) { i++; continue; }                          // 詰め物
+    if (m === 0x01 || (m >= 0xd0 && m <= 0xd7)) { i += 2; continue; }   // 長さの無いマーカー
+    if (m === 0xd9 || m === 0xda) return null;                  // 縦横より先に中身が来た
+    const len = buf.readUInt16BE(i + 2);
+    // SOF0〜SOF15。ただし C4(DHT) C8(JPG) CC(DAC) は別物
+    if (m >= 0xc0 && m <= 0xcf && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) {
+      if (i + 9 > buf.length) return null;
+      return { h: buf.readUInt16BE(i + 5), w: buf.readUInt16BE(i + 7) };
+    }
+    i += 2 + len;
+  }
+  return null;
 }
 
 const problems = [];
@@ -104,10 +132,13 @@ for (const { status, file } of changed) {
     continue;
   }
 
-  if (ext === '.png') {
-    const px = pngSize(full);
+  if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+    const isPng = ext === '.png';
+    const px = isPng ? pngSize(full) : jpegSize(full);
     if (!px) {
-      problems.push(`${file} は PNG ではありません。名前だけ .png にしていませんか`);
+      problems.push(isPng
+        ? `${file} は PNG ではありません。名前だけ .png にしていませんか`
+        : `${file} は JPEG ではありません。名前だけ ${ext} にしていませんか`);
     } else if (px.w > MAX_PX || px.h > MAX_PX) {
       problems.push(`${file} の絵が大きすぎます（${px.w}×${px.h}。${MAX_PX} まで）`);
     } else {

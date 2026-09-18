@@ -308,7 +308,8 @@ footer .cta:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; 
 //  URB ギャラリー
 //    works.json を読んでパネルを並べるだけのページ。
 //    作品を足すときは works/<id>.rb を置いて works.json に 1 件書く。
-//    絵は thumbs/<id>.png。無ければ種類の色と題名でその場で描く。
+//    絵は thumbs/<id>.png か .jpg。どちらかは works.json の thumb に書いてある。
+//    無ければ種類の色と題名でその場で描く。
 // ============================================================
 const LAB_BASE = '/uiap-hid-web/';   // 開く先。同じ github.io の中にある
 
@@ -364,19 +365,24 @@ function cardOf(w) {
 
   const thumb = document.createElement('div');
   thumb.className = 'thumb';
-  const img = document.createElement('img');
-  img.loading = 'lazy';
-  img.alt = '';
-  img.src = `thumbs/${encodeURIComponent(w.id)}.png`;
-  // 絵が無いのは普通のこと。無ければ題名のカードに差し替える。
-  img.addEventListener('error', () => {
+  // 絵が無いのは普通のこと。無ければ題名のカードにする。
+  const autoThumb = () => {
     thumb.classList.add('auto');
     thumb.textContent = '';
     const s = document.createElement('span');
     s.textContent = w.title || w.id;
     thumb.appendChild(s);
-  });
-  thumb.appendChild(img);
+  };
+  if (w.thumb) {
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.alt = '';
+    img.src = `thumbs/${encodeURIComponent(w.thumb)}`;
+    img.addEventListener('error', autoThumb);   // 読めなかったときも同じカードに
+    thumb.appendChild(img);
+  } else {
+    autoThumb();
+  }
 
   const body = document.createElement('div');
   body.className = 'body';
