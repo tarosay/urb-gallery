@@ -1,0 +1,11 @@
+{
+  "title": "ピカゲット",
+  "author": "むつ",
+  "group": "CoderDojo 和歌山有田",
+  "region": "和歌山県",
+  "kind": "光る",
+  "desc": "モンスターをゲット",
+  "tags": ["モンスター","8x8LED","ドット絵"],
+  "lab": "block",
+  "date": "2026-09-19"
+}
