@@ -2,6 +2,7 @@ pin9 = GPIO.new(9, GPIO::OUT)
 pin10 = GPIO.new(10, GPIO::OUT)
 pin11 = GPIO.new(11, GPIO::OUT)
 pin12 = GPIO.new(12, GPIO::OUT)
+sonar = Ultrasonic.new(1, 7)
 pwm5 = PWM.new(5)
 pwm6 = PWM.new(6)
 
@@ -9,113 +10,102 @@ def func
   v = v2
   v3 = v4
   if v2 >= 0
-    pin9.on
-    pin10.off
-  else
     pin9.off
     pin10.on
+  else
+    pin9.on
+    pin10.off
     v = -1 * v
   end
   if v4 >= 0
-    pin11.on
-    pin12.off
-  else
     pin11.off
     pin12.on
+  else
+    pin11.on
+    pin12.off
     v3 = -1 * v3
   end
   if v >= 60
     pwm5.duty(60)
-    wait_ms 200
+    wait_ms 100
   end
   if v3 >= 60
     pwm6.duty(60)
-    wait_ms 200
+    wait_ms 100
   end
   pwm5.duty(v)
   pwm6.duty(v3)
 end
 
+v5 = 0
 v2 = 0
 v4 = 0
 func
-wait_ms 3000
+wait_ms 2000
 
 loop do
-  v2 = 90
-  v4 = 90
-  func
-  wait_ms 1000
-  v2 = 0
-  v4 = 0
-  func
-  wait_ms 2000
-  v2 = -90
-  v4 = -90
-  func
-  wait_ms 1000
-  v2 = 0
-  v4 = 0
-  func
-  wait_ms 2000
-  v2 = 90
-  v4 = -90
-  func
-  wait_ms 1000
-  v2 = 0
-  v4 = 0
-  func
-  wait_ms 2000
-  v2 = -90
-  v4 = 90
-  func
-  wait_ms 1000
-  v2 = 0
-  v4 = 0
-  func
-  wait_ms 2000
+  v6 = sonar.read
+  if v6 <= 12
+    v2 = -90
+    v4 = 90
+    func
+    wait_ms 400
+  elsif v5 > 10
+    v2 = -90
+    v4 = -90
+    func
+    v2 = 90
+    v4 = -90
+    func
+    wait_ms 400
+    v5 = 0
+  else
+    v2 = 90
+    v4 = 90
+    func
+  end
+  v5 = v5 + 1
 end
 
 # ------------------------------------------------------------
 # ここから下は URB Block Lab のブロックです。消すとブロックに戻せません。
 # 上の Ruby を書きかえても、読みこむときはこちらが使われます。
 # ------------------------------------------------------------
-# urb-block/1 1ZrZbuJYGsefBQMSxjbYGAM2Qixh38GAWWTA4AWDFzBmx6h7XmCu6mqkGWku52o0N30x/TatnuUtRklV0kmFVAUq06r4AkXh
-# urb-block/1 5NvO7/zP8XdyAEaKPp4tAeoAKJwmrThJaAnGUtY1gELhh297B8DczQWAAlbGaKBrg6XJGSYAAzIPUMCkvKVgrQ7FJvNoCl1H
-# urb-block/1 QbTEATCwBSjEj+IwsAMoBMNhQNbmK/POV7Jy+3ln/faHR7bHnKLc280yFSLXmo8SPYlyJJ0oPV1FARgQtqbB0SZnCrd/yxnS
-# urb-block/1 8i7WpXBr22fBgCgLCn/npxwvpQAK+O8P//jlDz8AMNBCb397Z5wXoiu97MAj7mh0tdpVtNAgB1gw0MIehsCtVp2yFVrNxXAv
-# urb-block/1 r6U2mD9QgGU9ToRONe5MLiccr28e5aJy5mSgrdSRYNyn04ED7O4EDUZzLxM8JfPlPWMDnkTbLAEUat16oFMN7LV2m+F1TZl3
-# urb-block/1 qGhKpPqL0sRTR5jzdi0Y0ISt+VLtN5xsDtTlvV2vZJMb5RmHeI69+r45KN5QPuBx8iX6tSG2MTwLj9ea4YkWxvnqPKLy7ech
-# urb-block/1 4ih6F+XHB34SGy+I98ZsYQfu15FpLNzckXgrQ4UcwY+4BQKfaAsQL1NgfR3ENWfI3EgRloOl8EC5d3fobDUW7EWHc85bFIQK
-# urb-block/1 5XySQytef0DH465ChVEOmTdLucwep5Pl8ufotOLFZuq1BYyXb3CsXihmM+maXgy0W5gPPzvH8BeSkX5Lxu6s90zUAquii4YU
-# urb-block/1 HMkHvb4Xkzm/VL7M09kSdttDbA8ebTP1aBCIo5g6FPAXvUZS/igYpDh3MOKXy5nyxur1v6cSevOOOOYQXGp/2slMOvNDJqS/
-# urb-block/1 mMwLUvLFEo51zTR0ZTmQH9Cv5zpBL5kNHJ0zPdiG0HBRYp4p4oRbppSlAFCmsRKe1CuXRs85UnRJHg/GujrnDOHeFVYOq2PK
-# urb-block/1 zs7gOpZu2yOBrC48Sa9SBSgg00g9XVDx107HvCpBZXsjylZB3W2XBjEm5PuW6WDdN1YVZXDIya35JeaMyQ3scqJhIPHaBJLO
-# urb-block/1 9GFSOi13w+ExNVjH0Vho8YLs3tpNVs7W/k7bZEk2OWWwMWTzof6j0k7ZGEky4aXV2Y43y+3e092imisDFEACMEA34o1bgdM1
-# urb-block/1 4CsKf9YTyHAuaFJIkllfMJFI9b0wzJ7xhKGPXYniPb6pIp26yJ+H2bdZe24WXPhbqnfU9Qfo6dcyu3V3RWqTtI8yoz5hEsAr
-# urb-block/1 cTTdSZmV+VdT+2IVz+raEB2OPTFNmU5sXqjhNLaRSPJ32xqGK5TK79U9ZOKF5IDUw56i/ZUL6c4aZ8jmRBVMefxA9vzY2Pgm
-# urb-block/1 nDgmu3R0j806ov/50i81i41ctdi5cv2HnH3TPtu1qi4CyYZtgU6gunweNoJdtigxLeqoDBS6cWSIxQnqgD1tdt7qK2XF8mXH
-# urb-block/1 vKpFO/bWdBya+gt8NXfp1D55LtJ7A3LVZrranpPuZGZK3Oy17ub/pPcOU0Q6gQo/HPVbyZQLyXQI7/es9+4NHCazG7XAie5d
-# urb-block/1 Oq1CgtW4fPu9AK1KIxFv0TY81UXjs1oPt2HCGWCv1nsx0kKhPmwVnBKMTyHLljwOz0kV9u2CzwxmNTSxqYrYpiBC+bE3DAfO
-# urb-block/1 ufK9keCvZVuUM1KbrSkWRomY5nNL4ldTu1Lxk5pTCnV85L69imjG2LaLMYWv5na54i9iXVaJeYsqXysxWJOMZKKF3+0k+/aK
-# urb-block/1 L2dFhA1HZjfd7tTW3O7pTePMYe8bFb+uOej1IYApGaziG7SgiAdqfoeKryf2CXoTFp0BPzjsnqgqkhAvndrrFb8Ktmcu/gDy
-# urb-block/1 iXov5SLTtFxOANdq+paxN0Ep0vWzxpLI9RQoOYu9paajlcRW9VgH27ZhDJyUQBKK+i2aPiqDg2ho4EOWsXWejpCn8ES+fLO9
-# urb-block/1 AB6tu8L2oZkeDRFYLXRE+D7YfZ5A4DWiruqmbgzm+uY36w5j3q9tAkUhgUCdo3tXr/jcZ7SIAGAg2Wx07hxd1KHptdVQM99g
-# urb-block/1 WkUuFJu6c1bVJ1/ZobGNQn1yXtRr0k5R5mzIIfKu55XwPWrQXIR1rqlXRrlASsa7Tps+cm0WXfhqrKs3QtBg8VivjmxKo+yq
-# urb-block/1 ug1K3zPWFcOS2B1MMvutVOgpHBRBJ5crygVYpxRZ2yJkv1jNB6queAbNszdvhzWdmbnQIG8cNvDOv85I8c9Pih+xDlyNdUd2
-# urb-block/1 EsPmoWPx485NYQLOUV68EmvXAct78xMkap/HC2CkOTyMp9di/Vk5BmvuwQ3USDYy08WGrdmmu5ZzRExSxAsr/VWvgleEsGWr
-# urb-block/1 jj16I3h2XiuLkeVedqm8MCuXbmBn2rGibgjr38rsDR7AKFxH6q31bEP010zO0D/dAGD+jz1ZDAtefgNg9a1iNtdmCsKBwNrB
-# urb-block/1 g+yvdd/xDYCwWZcnYbpmbc3DHGQ6KUPpPaeRvPwKgNCEk+gJqfUTk+r1GtQWp70vGL5sKcZ4T0Yg0b3TdPsoyMZYg8q1dwC1
-# urb-block/1 ZdrBF8u+aSPU2e9ZqJsXpOcxYp/uAL4c5WNGVidQyTMrp07jXjMTIXOx5uIdM9Jzojya1FCnlz4shi3E8miht7glSnuJuhEG
-# urb-block/1 M1vV7+zCm5EUVYtvcUtE6Yy/sS4sq6HDhI0cbvRMh732DLLth/hQy5ADxWy8knEQsKqfFetLCQkdoNwJlc2QpB+HBTpyqCnv
-# urb-block/1 mJB61uSTPBQPFeyUG6/JNj67PfPGc4WMSHx/w+ZAn9wiG0jncNryO/dLli/UkaZTErWlODejG7sL9c8RJXslJbJAY6SUo7Ns
-# urb-block/1 k28ckg5WIaNvoSMqaE+La2lvtZM52TtHdhA7fMeU4OOBT1usQrtZa2DXywk33C28hY744uVNrZsYz9pyboP1WPu0d775cCEh
-# urb-block/1 TTMHhterdrdvDmfmjRZvFlJXEhLLgIlqS4BVI6A0h0uy2feceau7XEcWp/T0uLDvlYSE3HQbLE5UwHdMSEHRlhMGJbbHxNax
-# urb-block/1 7aLY2Ei/yWmE82RbumYy20Sq0O5Uj13N03obGVnsEmWPKNHiMHTCwyAnB5LWtZsNKvoTfIjF48GRZyQdFnTtzAvv5TKSLS1u
-# urb-block/1 MnyTXOGiUpqWAzjdQ98xJArRcQW20oo9jPmTc4Dlc+4zR9bLGfEYLmZUPrJ7f9eyiPSGclnkW8hIEk7HGYGwG36CYFeRaD5V
-# urb-block/1 Uq4kpOnKhVripGzvwV50loBVZHp6CxkpdKCEtK8gQeEEzctbSybMwTsmpD2oF1t2MoBGpj2ECaB9KIO9zXEETK3w4lw9Zha9
-# urb-block/1 5ZKvysJN+cxWc4WMpHO0lMkVjGh7MnXZ0MrazVx7Zl2ZWgdFeuBxBkMG6ZtPwmb9LWSEWmi1NVwcBSl/FqpOlvoYGb9jSLIV
-# urb-block/1 0WHpvIrnWIphk558ORZ4CxkZEWQNnu025ggcdFdZXCIDZ+C7nBDbtlRY3BS4zInxuugsOc+SxJWEIBAT9GNMhpt2JoTb2ZSM
-# urb-block/1 XexlGfn6w1rwb23Gu3/N1Dj11vevP//0y48fHnqAq7WuNE7pks/fqKQ38QwWA4HbLs6n0f/+8Ldf//jTw8s5up5pZcY8ppNe
-# urb-block/1 nnSASaHYfDz6158//OvD3x96TQ64w6+XQjgLxVzj9nyTyjHPR/seGoZ519ZUVoUsuU5li1OyKhGVx8P/+8NffvnxQ/x++At0
-# urb-block/1 fjY8cT/8PKmPgvnTn//zz78+WD/fc/t8+IP18/0x1vof
+# urb-block/1 1VrZruLYFf0WDEiAbcCMBoTAgJkHg8EMFgYbzOgBbDMao+685jkvaSWR+hPykod8TilS919E93bubKou1O1OFQ9gicPeZ6+z
+# urb-block/1 1zp7n4MOcII8WqpAVAcEVppu2ClP8Yo6lyUg6oUev6V1QDuseCAKbBRuIEsDVWMVDYCA+RiIAjLiO+Dy0Wh7nQu77j9GA4E+
+# urb-block/1 AAF7IAr7fAgEHIAojPghYC6tNtq9r0zt7v3e+t3DM9uqLLHKYCRLk/n0wb4qBMOT+ba5NOKziOCdNoRyEYCAyZwXxvfmmo1C
+# urb-block/1 DogCCAABeDpfA6JAGDAgQOL3mpmfLavMWU7g1YHKPwZBMZH4iJqh/QhLTU+eTqYTyL9wQmGNu4/7wVonZw8rTlaz2HjDadD1
+# urb-block/1 sccJGMbzECms3MLvHtQZO5Z3z9yLrDYbSBuR45UH59W6a5+zpiJx0k57lmGrlNfWL5xXWxUg6jUM4zNh3cE3YgXhwWgEZM/R
+# urb-block/1 oVR2b1DOC6/501FdABDA7zWFJTVW4+9+yypT9X6pVf5u3j7jhVesggNR4Ncf/vnpTz8AEEB5HxGo1EVCrq8GVCiHgq1Qkasd
+# urb-block/1 J3eYU8jjENVGcfZp+wxy3pyE+VOVfNHzCiQSb3rfixFjL5TLHkKDiZXlKJfEg3WXM8cIurOLvNduONYL6MWlC204c5xK9frZ
+# urb-block/1 LHcT9jt2rg1E9cFunB5W4tmiPWqIMRbKN+v9eBB4HnyFfO8UG1EmWiALW8eCUomjGK9kW8jbKfq83vtZPr2gF/ObyAq/fTKa
+# urb-block/1 LYzF/pbGW96sY8bn1wmBH/3GWiQUuSft/ef7Savw7PjB+MR1OmS1Zm9OwQe9Pcs3A/DuIpvEntPd8bqGIB+gbU29VEgwJ+Bz
+# urb-block/1 aI9kSVNkQR3MJw8OQ5jGVOw1SfIThdZ511hXkq03yc4LKl+YpOWNpAFRBAJmrIoLKg9ENWXDv0jMQtZr5liQp/PRYCSLK1bh
+# urb-block/1 H1xXpKheZSLMkJ4VZkeyGKLRzotYawQQBcpNHHjhAnvv6gvtfgOLpJenXh+WkcSad298pgkKfUbppk9K14DqLkxSlA0ayenO
+# urb-block/1 BMMXe/Nr1+bOWeq9AbhKrmCvXt9zBXdQzRA+S6cTfxsA4vtf0gKZmin4r/VNjlkxlwjGw1KmZVj047YRXn/H+sbvttVZjKwb
+# urb-block/1 e01fOdtdXBHotyjBkesVLijx54kbFRvnNk7TzejeT3reWo5cL3HeAFdep0GWQ0r7TH1mdDrE9EaJSya1hm8rrpZVkIx4pqlk
+# urb-block/1 rRB4O8fAk8JBQCGLvJujKVwFY/NldZwd8+K6Sld7evctR3PNb4SieyhonMlUCNmNofzAyMAjlb22GLmKooEO1pQmWV/DDcL5
+# urb-block/1 caSHc4xuQlHvE0VNsX9N0dC8zdWQvTKsn5UqdUirDrj8HVO0vUroexANZ3JsJLg8F8S10foYisIE3Uho01Mu55otPLSsJzsm
+# urb-block/1 FIXfw9Hn+PeMrasydqI2VR7CytKPnhe77xj/vh7mugJcmYdQLJU4tZwjm/WCkF0Hf+5Y9/uCcJAYxNwHjZsUSYtxI/yvJDKR
+# urb-block/1 Zo7Mutg57xrEIm5kpjlKuFEi47mR2t2ElG4edI5UAlwu9c5Fibyy+wnYLUbfvSuD6xEUcxOekH1D/GHdj+F0OnqgpZIY0+mm
+# urb-block/1 4UGxUMSkPnhR20IAXibx91CgZD2k50okVgtXbTpTJiwaWv+OKcBTnKE1xcVkhROBnSNlQFvbh1AA6/Qtfuch00NJZrg6pjlw
+# urb-block/1 6r5UJHw2v+5tj2asNH3cfR1cZL1YxfmuEEpQ67KcTveYr8muDF5uvntvxrtyOp+36jFNzSVOFc3v2TVMtrbLfdOYf+wy0mi/
+# urb-block/1 z2XGve4SdcCxY7Aq7s+/9UzB4LOeaSQLArtS+fFvncXlZDK+3F+Z0rV7tG0VOx7sBaKu9STsHWJh7CKgwkjXRLojlxml72wJ
+# urb-block/1 WKi//yq6YtW0H2mUyvlcti6XQx0K8fm/ptjJIO5RwdIPxuROJqWi3DBnUy8GY864GxQvZUd2vbANIYm25lSEYqFLJi56LbmD
+# urb-block/1 pXVwA7KlwJZRDi65Xu5/SxD2CD2l1lypMQ2umEMyOWt0WheDuaBIn4XQpOPGHJ1O+Njgl7AvVYAZsF3we94I68d02LkYsRmB
+# urb-block/1 6c0JTAaWuNRd4IOaWfV+a4e9IqZg1dpM9Amn7LJOB8k2+lXlu3ey2CXljNTd7awGtayuxmPl+oy+onzP2LP6rHJWD8PhCR9s
+# urb-block/1 MW8SvXR++IUGezyfzjVWGOyUufaEP5ZsLhc4uXd1+10SHu8zmZfVKVGo3h04AhBANrHmncDJk8nnjmAvupoWpnFHvo8PxRp5
+# urb-block/1 aDmIkN0yMHGFeJ/7koB3FAWm7rAdEkszGDeD62N3iG7TnB/+UmTSTYFFdyCZ1S2uBUcJeX+ssAqOzDB8GdjnQTTVtdYuPkMl
+# urb-block/1 0EbqofSShA6nauby6c5Hbw3DjTdaPIpHUPOXMoOIHHOXTQp0UyLdW2OVuTYTeW0+etxxx1QY9i/mDCP3XRUko4ZE/C31K61y
+# urb-block/1 s0CUuzfyH7UzmnV5oAhHEM7HLKFuiFBNyn/kOlIiUsJWGwhk89QOrs9g10lLS3Or75SVZg2ZlrbjRnMNh7jVdpCbZpLXLu3L
+# urb-block/1 8+Fr9H6ddvHByHIHhw9W3pGc5TTE+jvpvRHpURN+O9AsraJY9zBc3gt9y3pf23IFayGY5OpFPx6oEvGN3X399ntFatWaKYwi
+# urb-block/1 LX6858WWddpvQXiThL1Z72uzgiPsPtawThiNd32qDN4T8o1WIR8g+IYlMFbOvajYT7vl6rJXLZS2Zr58HyP47uMA7HbTWanB
+# urb-block/1 HpJH54zWD8Uvhnab4h8yBXg5nQcytlDPw/kWZyJMfzGyGxS/HuTza6sHjS4czuSw3fZ7V/4/rJL9eMWPogq09SAozZSWyaAn
+# urb-block/1 iWB9k+uUr1T8hmQjt3oIEXJIzTegwLgbNDvJ+38rfqyxLUadmWrDKlgOEL23oFvo2qW9XfHrQ1BH7fEgk3BCLXHaWIwIK3Bz
+# urb-block/1 DX+OCYqtS7UmwbrX1eARyq18pKZ7a6m96DZ0y76pDOxRPhIUxK/R9OYsXUudSn3LILZpZnUCJ8jG9ZvtFckj9TbIEV3KCTSI
+# urb-block/1 1NETPGacvbcBhN4j6qKsycpgJe+erB/cNjpbPDd65WMEz1q66NK1MBGjuxvqTKvZvXd01UFnTqIrSnYTgsskNmcptBnIe248
+# urb-block/1 6LRwKBNZleX69CAIqz5qm4wdZpcR3tvSejlM5E6R4TRSJ5pCOmwTNi3h5rQm6XBAwbyRPZNGWjI7W0nn7Lec1lY1zvjjKknv
+# urb-block/1 2E5MFQd6VlpcryhXpDUuzKU9HGHKRDFEOLCct9hPf1xah43qxtPblLIbyD7tibrISD6TtA7dnNZjJjOiUOeslGjFA3ZYlCWe
+# urb-block/1 vDGtHTpS9BRncMK6wkrOeGuojxa3pvUrOAZb9ukm1RneDzJnygLV27uN013SZMsFpr+rFbxhCjY91pr6kgUP3gnJB5ACKT11
+# urb-block/1 YVWu3cDuX30Desru+3+nSax4N6df/vW3X3/6+WEa5v9dgB5Hf/rxz59+/OvDaPNz56fR//np77/8+2fs8crXFK+n4b/+8I9P
+# urb-block/1 P/7lcfiFm4JX1lOPtxamULy2/jjcvKfoG/8F
