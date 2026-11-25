@@ -13,6 +13,7 @@
 // ============================================================
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { inflateRawSync } from 'node:zlib';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,6 +43,27 @@ const THUMB_EXTS = ['.png', '.jpg', '.jpeg'];
 const ID_RE   = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const RB_LINE = /^#\s*urb-block\/1\s+[A-Za-z0-9+/=]+\s*$/m;
+// 1 行ずつ読むとき用（base64 の部分を取り出す）。URB Block Lab の RB_LINE と同じ形。
+const RB_DATA = /^#\s*urb-block\/1\s+([A-Za-z0-9+/=]+)\s*$/;
+
+/**
+ * .rb の末尾に畳んであるブロックのデータを開く。
+ * URB Block Lab は Blockly の保存データ（JSON）を deflate-raw で縮めて base64 にしている。
+ * 開けなければ null（Lab でも開けない .rb）。
+ */
+function blockState(rbText) {
+  const b64 = rbText.split(/\r?\n/)
+    .map(line => line.match(RB_DATA))
+    .filter(Boolean)
+    .map(m => m[1])
+    .join('');
+  if (!b64) return null;
+  try {
+    return JSON.parse(inflateRawSync(Buffer.from(b64, 'base64')).toString('utf8'));
+  } catch (e) {
+    return null;
+  }
+}
 
 const problems = [];
 const fail = (id, msg) => problems.push(`${id}: ${msg}`);
@@ -85,8 +107,22 @@ async function readWork(id) {
   }
 
   // ブロックの作品は、末尾のコメントにブロックが入っていないと開けない。
-  if (lab === 'block' && !RB_LINE.test(await readFile(rbPath, 'utf8'))) {
-    fail(id, '.rb に「# urb-block/1 …」の行がありません。URB Block Lab の「.rb で保存」で出したものを置いてください');
+  // 入っていれば開いてみて、権利表記（URB Block Lab の「権利表記」）があるかを見る。
+  // 印の元は .rb だけにする（.json に書かせると、.rb と食い違っても気づけない）。
+  let notice = false;
+  if (lab === 'block') {
+    const rbText = await readFile(rbPath, 'utf8');
+    if (!RB_LINE.test(rbText)) {
+      fail(id, '.rb に「# urb-block/1 …」の行がありません。URB Block Lab の「.rb で保存」で出したものを置いてください');
+    } else {
+      const state = blockState(rbText);
+      if (!state) {
+        fail(id, '.rb の「# urb-block/1 …」の行が読めません（こわれているか、途中が欠けています）。' +
+                 'URB Block Lab の「.rb で保存」で出しなおしてください');
+      } else {
+        notice = typeof state.urbNotice === 'string' && state.urbNotice.trim() !== '';
+      }
+    }
   }
 
   return {
@@ -100,6 +136,7 @@ async function readWork(id) {
     tags,
     lab,
     date:   meta.date,
+    notice,       // 権利表記があるか。一覧のカードに印を出す
     thumb:  '',   // 絵のファイル名。下で docs/thumbs/ を見て埋める
   };
 }

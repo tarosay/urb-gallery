@@ -207,6 +207,15 @@ main { max-width: 1080px; margin: 0 auto; padding: 6px 24px 64px; }
   background: linear-gradient(135deg, var(--kind) 0%, #fff 190%);
   padding: 14px;
 }
+/* 権利表記がある作品の印。カード全体が 1 つのリンクなので、押せるものにはしない。
+   表記の文は Block Lab で開いたときの「権利表記」で読む。 */
+.notice-mark {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 0.72rem; font-weight: 700; line-height: 1;
+  color: #fff; background: rgba(35, 56, 77, 0.78);
+  border-radius: 999px; padding: 5px 9px;
+  white-space: nowrap;
+}
 .thumb.auto span {
   font-size: 1.05rem; font-weight: 700; line-height: 1.45;
   color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.32);
@@ -368,10 +377,10 @@ function cardOf(w) {
   // 絵が無いのは普通のこと。無ければ題名のカードにする。
   const autoThumb = () => {
     thumb.classList.add('auto');
-    thumb.textContent = '';
+    thumb.querySelector('img')?.remove();   // 権利表記の印は残す
     const s = document.createElement('span');
     s.textContent = w.title || w.id;
-    thumb.appendChild(s);
+    thumb.prepend(s);
   };
   if (w.thumb) {
     const img = document.createElement('img');
@@ -382,6 +391,14 @@ function cardOf(w) {
     thumb.appendChild(img);
   } else {
     autoThumb();
+  }
+  // 権利表記がある作品（ほかの人が作った曲・絵などや、作者が MIT の対象外にした自作のもの）。
+  // 開く前に分かるようにする。絵の上の右上に重ねる（.thumb.auto span の題名の書式が付かないよう small にする）。
+  if (w.notice) {
+    const mark = document.createElement('small');
+    mark.className = 'notice-mark';
+    mark.textContent = '権利表記あり';
+    thumb.appendChild(mark);
   }
 
   const body = document.createElement('div');
@@ -404,6 +421,7 @@ function cardOf(w) {
     [w.author, w.group, w.region].filter(Boolean).join(' / '),
     [w.kind, ...(w.tags || []).map(t => '#' + t)].filter(Boolean).join('  '),
     w.desc,
+    w.notice ? '権利表記あり（開いて「権利表記」を押すと読めます）' : '',
   ].filter(Boolean).join('\n');
 
   a.appendChild(thumb);
